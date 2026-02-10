@@ -9,29 +9,25 @@
         h2, h3 { color: #1a1a1a; margin-top: 0; }
         
         label { font-weight: bold; font-size: 0.9em; display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1em; transition: border-color 0.3s; }
-        input:focus { border-color: #3498db; outline: none; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
 
-        /* Estilo da Fórmula */
         .formula-container { background: #2d3436; color: #fab1a0; padding: 15px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; position: relative; cursor: pointer; }
-        .formula-container:hover { background: #353b48; }
         .copy-badge { position: absolute; top: 5px; right: 10px; font-size: 0.7em; color: #95a5a6; text-transform: uppercase; }
 
-        /* Zona de Testes */
+        .info-a2 { margin-top: 10px; font-size: 0.85em; color: #666; background: #fff9db; padding: 10px; border-radius: 4px; border-left: 4px solid #f1c40f; }
+
         .test-zone { background: #e3f2fd; border: 2px solid #bbdefb; padding: 20px; border-radius: 8px; }
-        .nota-final { font-size: 2em; font-weight: bold; color: #1976d2; text-align: center; display: block; }
-        
-        .math-explanation { font-size: 0.85em; color: #7f8c8d; margin-top: 20px; font-style: italic; }
+        .nota-final { font-size: 2.5em; font-weight: bold; color: #1976d2; text-align: center; display: block; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>1. Configuração dos Limites</h2>
-    <label>Maior Pontuação (x) → vira Nota 10</label>
+    <h2>1. Parâmetros</h2>
+    <label>Maior Pontuação (x) → Nota 10</label>
     <input type="number" id="x" placeholder="Ex: 100" oninput="atualizarTudo()">
 
-    <label>Menor Pontuação (y) → vira Nota 7</label>
+    <label>Menor Pontuação (y) → Nota 7</label>
     <input type="number" id="y" placeholder="Ex: 40" oninput="atualizarTudo()">
 
     <h3>Fórmula para o Excel</h3>
@@ -39,20 +35,19 @@
         <span class="copy-badge">Clique para copiar</span>
         <span id="resultado-excel">=Aguardando valores...</span>
     </div>
+
+    <div class="info-a2">
+        <strong>Nota sobre o "A2":</strong> Na fórmula acima, <code>A2</code> refere-se à célula que contém a pontuação original do candidato. Se a sua primeira nota estiver em outra coluna (ex: B3), basta substituir esse trecho manualmente após colar no Excel.
+    </div>
 </div>
 
 <div class="card test-zone">
-    <h3>2. Zona de Testes</h3>
-    <label>Digite uma pontuação para testar:</label>
-    <input type="number" id="ponto-teste" placeholder="Ex: 80" oninput="atualizarTudo()">
+    <h3>2. Simulador de Resultados</h3>
+    <label>Simule uma pontuação aqui:</label>
+    <input type="number" id="ponto-teste" placeholder="Digite um valor para testar" oninput="atualizarTudo()">
     
-    <label>Nota Convertida:</label>
+    <label>Nota Final (7 a 10):</label>
     <span class="nota-final" id="nota-simulada">-</span>
-</div>
-
-<div class="math-explanation">
-    <strong>Lógica aplicada:</strong><br>
-    Nota = 7 + (Ponto - Mínimo) * (3 / (Máximo - Mínimo))
 </div>
 
 <script>
@@ -68,21 +63,19 @@ function atualizarTudo() {
         const diff = x - y;
         const fator = 3 / diff;
         
-        // Atualiza a fórmula do Excel (arredondando o fator para 4 casas decimais para ficar limpo)
-        const fatorLimpo = parseFloat(fator.toFixed(4));
-        resExcel.innerText = `=7+(A2-${y})*${fatorLimpo}`;
+        // Exibe a fórmula com 4 casas decimais no fator para precisão
+        resExcel.innerText = `=7+(A2-${y})*${parseFloat(fator.toFixed(4))}`;
 
-        // Atualiza a Zona de Testes
         if (!isNaN(pTeste)) {
             let nota = 7 + (pTeste - y) * fator;
-            // Limita a nota entre 7 e 10 (caso o usuário teste valores fora do range)
+            // Mantém a nota no limite de 7 a 10
             nota = Math.max(7, Math.min(10, nota));
             resSimulado.innerText = nota.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         } else {
             resSimulado.innerText = "-";
         }
     } else {
-        resExcel.innerText = "=Aguardando valores válidos...";
+        resExcel.innerText = "=Insira X e Y válidos";
         resSimulado.innerText = "-";
     }
 }
@@ -91,7 +84,7 @@ function copiarFormula() {
     const texto = document.getElementById('resultado-excel').innerText;
     if (texto.startsWith('=')) {
         navigator.clipboard.writeText(texto);
-        alert("Fórmula copiada para a área de transferência!");
+        alert("Fórmula copiada!");
     }
 }
 </script>
