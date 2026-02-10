@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de fórmula para a análise de currículo do PPGArtes-UFC</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; line-height: 1.5; color: #333; }
+        input { width: 100%; padding: 10px; margin: 10px 0 20px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .formula-box { background: #eef2f3; padding: 15px; border: 2px dashed #999; font-family: monospace; font-weight: bold; font-size: 1.1em; color: #000; }
+        .explicação { font-size: 0.9em; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Gerador de Fórmula</h2>
+    
+    <label>Maior Pontuação (x) -> Nota 10:</label>
+    <input type="number" id="x" placeholder="Digite o valor de x" oninput="gerar()">
+
+    <label>Menor Pontuação (y) -> Nota 7:</label>
+    <input type="number" id="y" placeholder="Digite o valor de y" oninput="gerar()">
+
+    <p>Fórmula para colar no Excel (Célula A2):</p>
+    <div class="formula-box" id="resultado">Aguardando valores...</div>
+
+    <div class="explicação">
+        <h3>Como o cálculo é feito?</h3>
+        <p>Utilizamos uma interpolação linear para mapear os pontos no intervalo [7, 10]:</p>
+        $$N = 7 + (P - y) \cdot \frac{10 - 7}{x - y}$$
+        <ul>
+            <li><strong>P:</strong> Pontuação do candidato (Célula A2).</li>
+            <li><strong>x:</strong> Sua pontuação máxima informada.</li>
+            <li><strong>y:</strong> Sua pontuação mínima informada.</li>
+        </ul>
+    </div>
+
+    <script>
+        function gerar() {
+            const x = parseFloat(document.getElementById('x').value);
+            const y = parseFloat(document.getElementById('y').value);
+            const res = document.getElementById('resultado');
+
+            if (x && y && x > y) {
+                const diff = x - y;
+                // Gera a fórmula exata para o Excel
+                res.innerText = `=7+(A2-${y})*(3/${diff})`;
+            } else {
+                res.innerText = "Insira valores válidos (x deve ser maior que y)";
+            }
+        }
+    </script>
+
+</body>
+</html>
